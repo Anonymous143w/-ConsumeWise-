@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consume Wise</title>
+    {% load static %}  <!-- Load static files -->
+    <style>
+        /* Main page styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F4EDE4; /* Soft peach background */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 80px;
+            background-color: #2B2D42; /* Dark navy for sidebar */
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Icons in sidebar */
+        .sidebar-icon {
+            font-size: 24px;
+            color: white;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar-icon:hover {
+            color: #FF6F61; /* Coral hover effect */
+        }
+
+        /* Link in sidebar */
+        .sidebar-link {
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+            margin: 20px 0;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar-link:hover {
+            color: #FF6F61; /* Coral hover effect for link */
+        }
+
+        /* Container for the main content */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: scroll;
+            box-sizing: border-box;
+        }
+
+        /* Header inside the main content */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            color: #2B2D42;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #FF6F61;
+        }
+
+        /* Card-style section */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Camera section similar to the screenshot UI */
+        .camera-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 40px;
+            border-radius: 12px;
+            background-color: #F8F9FA;
+        }
+
+        .camera-section .circle {
+            width: 5cm;
+            height: 5cm;
+            background-color: #EAEAEA; /* Light grey */
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        }
+
+        .camera-icon {
+            font-size: 50px;
+            color: #2B2D42; /* Dark color for icon */
+        }
+
+        .circle-text {
+            font-size: 16px;
+            color: #2B2D42;
+            font-weight: bold;
+        }
+
+        /* Query suggestion styling */
+        .query-section {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .query-box {
+            background-color: #F4EDE4; /* Matching background */
+            border-radius: 12px;
+            padding: 15px;
+            flex: 1;
+            margin-right: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #2B2D42;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .query-box:hover {
+            background-color: #FF6F61;
+            color: white;
+        }
+
+        /* Form styling */
+        .prompt-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .query-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #2B2D42;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #2B2D42;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #FF6F61;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-icon">🏠</div>
+        <div class="sidebar-icon">📷</div>
+        <div class="sidebar-icon">📊</div>
+        <div class="sidebar-icon">⚙️</div>
+        <a href="{% url 'query' %}" class="sidebar-link">Query</a>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1>Consume Wise</h1>
+            <div class="user-avatar"></div>
+        </div>
+
+        <!-- Camera Section -->
+        <div class="card">
+            <div class="camera-section">
+                <div class="circle" id="camera-circle">
+                    <div class="camera-icon" id="camera-icon">📷</div>
+                    <div class="circle-text">Click a picture</div>
+                </div>
+
+                <!-- Video stream for camera -->
+                <video id="video" width="400" height="300" style="display:none;"></video>
+                <!-- Canvas to capture the photo -->
+                <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+                <!-- Capture button -->
+                <button id="capture" style="display:none;">Capture Photo</button>
+            </div>
+        </div>
+
+        <!-- Image Upload Form -->
+        <div class="card">
+            <div class="prompt-box">
+                <form method="post" enctype="multipart/form-data" action="{% url 'upload_image' %}">
+                    {% csrf_token %}
+                    <input type="file" name="image" required>
+                    <button type="submit" class="submit-btn">Upload</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Query Suggestions -->
+        <div class="card">
+            <div class="query-section">
+                <div class="query-box">Is this the best deal for my budget?</div>
+                <div class="query-box">Are there eco-friendly alternatives?</div>
+                <div class="query-box">Is this product compatible with my preferences or needs?</div>
+                <div class="query-box">Can I get this delivered faster?</div>
+            </div>
+        </div>
+
+        <!-- Prompt Box -->
+        <div class="card">
+            <div class="prompt-box">
+                <form method="post" action="{% url 'query' %}">
+                    {% csrf_token %}
+                    <input type="text" name="query" class="query-input" placeholder="Ask about the product...">
+                    <button type="submit" class="submit-btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Access the camera when the user clicks the camera icon
+        document.getElementById('camera-circle').addEventListener('click', function () {
+            const video = document.getElementById('video');
+            const captureButton = document.getElementById('capture');
+
+            // Show the video stream and capture button
+            video.style.display = 'block';
+            captureButton.style.display = 'block';
+
+            // Access the user's camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function (err) {
+                    console.error("Error accessing camera: ", err);
+                });
+        });
+
+        // Capture the photo
+        document.getElementById('capture').addEventListener('click', function () {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+
+            // Draw the current frame from the video onto the canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert canvas to a data URL
+            const dataURL = canvas.toDataURL('image/png');
+
+            // Hide the video stream and capture button
+            video.style.display = 'none';
+            document.getElementById('capture').style.display = 'none';
+
+            // You can send this dataURL to your server or handle it as needed
+            console.log(dataURL);
+        });
+    </script>
+</body>
+
+</html>
