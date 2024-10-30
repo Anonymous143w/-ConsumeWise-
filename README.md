@@ -32,11 +32,6 @@ The document used for retrieval is constructed by us using an ETL pipeline. The 
 
 This custom-built knowledge base ensures the outputs are contextually accurate and aligned with real-world nutritional standards.
 
-## Project Structure
-
-ConsumeWise/ │ ├── data/ # Custom ETL-processed nutrition data ├── models/ # Contains Llama 3.2 1B-Instruct model setup ├── scripts/ # ETL and RAG-related scripts ├── README.md # Project documentation └── requirements.txt # Dependencies
-
-
 ## Challenges
 
 - **Response Time**: Despite switching to a smaller model, the average response time is still around 55 seconds, which can be slow for practical applications.
